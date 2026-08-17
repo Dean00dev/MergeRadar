@@ -28,7 +28,9 @@ export function formatCheckOutput(report) {
     `**CODEOWNERS:** ${report.codeowners.present ? `${report.codeowners.covered.length}/${report.changedFiles} changed paths matched by the bounded parser` : 'not found in standard locations'}`,
     `**Unowned sensitive paths:** ${report.unownedSensitiveFiles.length}`,
     '',
-    '> MergeRadar reports deterministic change impact. A successful check means the analysis completed; it does not certify that a change is safe.'
+    report.complete
+      ? '> MergeRadar reports deterministic change impact. A successful check means the analysis completed; it does not certify that a change is safe.'
+      : '> MergeRadar could not enumerate the complete pull request because GitHub caps the Pull Files response at 3,000 files. Treat this result as incomplete.'
   );
 
   const details = report.reasons.length
@@ -38,7 +40,7 @@ export function formatCheckOutput(report) {
   return {
     name: 'MergeRadar / Change Impact',
     status: 'completed',
-    conclusion: 'success',
+    conclusion: report.complete ? 'success' : 'neutral',
     output: {
       title: `Impact: ${impact} • ${report.findings.length} ${report.findings.length === 1 ? 'surface' : 'surfaces'}`,
       summary: lines.join('\n'),
