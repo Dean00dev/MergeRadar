@@ -63,14 +63,17 @@ export async function fetchPullFiles(token, owner, repo, pullNumber) {
     if (batch.length < 100) break;
   }
 
-  return files.map((file) => ({
-    filename: file.filename,
-    status: file.status,
-    additions: file.additions,
-    deletions: file.deletions,
-    changes: file.changes,
-    previousFilename: file.previous_filename || null
-  }));
+  return {
+    files: files.map((file) => ({
+      filename: file.filename,
+      status: file.status,
+      additions: file.additions,
+      deletions: file.deletions,
+      changes: file.changes,
+      previousFilename: file.previous_filename || null
+    })),
+    truncated: files.length >= 3000
+  };
 }
 
 async function fetchTextContent(token, owner, repo, pathname, ref) {
