@@ -1,0 +1,18 @@
+{
+  "name": "mergeradar",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Know what a pull request can affect before you merge it.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "check": "node scripts/check-syntax.js",
+    "verify": "npm run check && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
