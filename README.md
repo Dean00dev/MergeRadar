@@ -37,6 +37,7 @@ The first release includes:
 - explicit review-lane suggestions;
 - standard-location CODEOWNERS discovery and bounded common-pattern coverage analysis;
 - GitHub Check output on pull requests;
+- explicit `incomplete` handling when GitHub's Pull Files API reaches its 3,000-file response ceiling;
 - webhook HMAC verification and duplicate-delivery suppression;
 - GitHub App JWT and installation-token authentication with no runtime dependencies;
 - Marketplace purchase-event normalization and durable JSON entitlement/event storage;
@@ -164,6 +165,10 @@ Read [`SECURITY.md`](SECURITY.md) and [`docs/THREAT_MODEL.md`](docs/THREAT_MODEL
 ## CODEOWNERS boundary
 
 MergeRadar v0.1 uses a deliberately bounded parser for common CODEOWNERS patterns. Unsupported constructs are surfaced as diagnostics instead of guessed. GitHub remains authoritative for actual CODEOWNERS enforcement.
+
+## Large pull requests
+
+GitHub's Pull Files API returns at most 3,000 files. If MergeRadar reaches that ceiling it returns **INCOMPLETE** with a neutral check instead of silently presenting a low/moderate/high verdict from partial evidence.
 
 ## Privacy
 
