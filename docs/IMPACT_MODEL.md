@@ -38,6 +38,10 @@ No configured match is `low`. At least one tier-2 match is `moderate`. At least 
 
 There is no `critical` category in v0.1 because the engine does not inspect semantics deeply enough to justify one.
 
+## Incomplete state
+
+GitHub's Pull Files API returns at most 3,000 files. If MergeRadar reaches that ceiling, it emits `incomplete` and a neutral GitHub Check instead of deriving a normal impact label from potentially partial evidence.
+
 ## Pattern philosophy
 
 Rules are path based and intentionally visible in `src/rules.js`.
