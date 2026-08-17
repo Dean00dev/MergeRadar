@@ -19,7 +19,7 @@ export class JsonStore {
   }
 
   write(mutator) {
-    this.queue = this.queue.then(async () => {
+    this.queue = this.queue.catch(() => undefined).then(async () => {
       const state = await this.read();
       const next = await mutator(structuredClone(state)) || state;
       await fs.mkdir(path.dirname(this.filename), { recursive: true });
