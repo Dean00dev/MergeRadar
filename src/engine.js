@@ -5,7 +5,7 @@ function unique(values) {
   return [...new Set(values)];
 }
 
-export function analyzeChange({ files, codeownersText = null }) {
+export function analyzeChange({ files, codeownersText = null, truncated = false }) {
   const findingsBySurface = new Map();
 
   for (const file of files) {
@@ -40,12 +40,19 @@ export function analyzeChange({ files, codeownersText = null }) {
   const maxTier = findings.reduce((max, finding) => Math.max(max, finding.tier), 0);
   let impact = 'low';
 
-  if (maxTier >= 3) impact = 'high';
+  if (truncated) impact = 'incomplete';
+  else if (maxTier >= 3) impact = 'high';
   else if (maxTier >= 2 || findings.length >= 3) impact = 'moderate';
 
   const reasons = findings.map((finding) =>
     `${finding.label}: ${finding.files.length} changed ${finding.files.length === 1 ? 'path' : 'paths'}`
   );
+
+  if (truncated) {
+    reasons.unshift(
+      'Pull-request file enumeration reached GitHub\'s 3,000-file response ceiling; MergeRadar will not present a complete impact verdict.'
+    );
+  }
 
   if (unownedSensitiveFiles.length) {
     reasons.push(
@@ -55,6 +62,7 @@ export function analyzeChange({ files, codeownersText = null }) {
 
   return {
     schemaVersion: 1,
+    complete: !truncated,
     impact,
     findings,
     reviewLanes: unique(findings.map((finding) => finding.lane)).sort(),
