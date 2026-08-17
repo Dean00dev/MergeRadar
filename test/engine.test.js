@@ -47,3 +47,16 @@ test('check output states completion is not a safety verdict', () => {
   assert.match(check.output.summary, /does not certify that a change is safe/u);
   assert.match(check.output.title, /HIGH/u);
 });
+
+test('3,000-file ceiling becomes explicit incomplete state instead of a low verdict', () => {
+  const report = analyzeChange({
+    files: [{ filename: 'README.md', additions: 1, deletions: 0, changes: 1 }],
+    truncated: true
+  });
+  const check = formatCheckOutput(report);
+
+  assert.equal(report.complete, false);
+  assert.equal(report.impact, 'incomplete');
+  assert.equal(check.conclusion, 'neutral');
+  assert.match(check.output.summary, /3,000 files/u);
+});
