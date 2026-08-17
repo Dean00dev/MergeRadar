@@ -26,11 +26,12 @@ export async function handlePullRequest(payload, config) {
   const owner = repository.owner.login;
   const repo = repository.name;
   const token = await getInstallationToken(config, installationId);
-  const files = await fetchPullFiles(token, owner, repo, pull.number);
+  const pullFiles = await fetchPullFiles(token, owner, repo, pull.number);
   const codeowners = await fetchCodeowners(token, owner, repo, pull.base.sha);
   const analysis = analyzeChange({
-    files,
-    codeownersText: codeowners?.content || null
+    files: pullFiles.files,
+    codeownersText: codeowners?.content || null,
+    truncated: pullFiles.truncated
   });
 
   const check = formatCheckOutput(analysis);
@@ -43,8 +44,8 @@ export async function handlePullRequest(payload, config) {
     headSha: pull.head.sha,
     checkRunId: result.id,
     impact: analysis.impact,
-    findings: analysis.findings.length,
-    analysis
+    complete: analysis.complete,
+    findings: analysis.findings.length
   };
 }
 
